@@ -6,6 +6,9 @@ import java.util.List;
 
 import org.springframework.data.redis.core.RedisHash;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 @RedisHash("PlayerInventory")
 public class PlayerInventory implements Serializable {
 
@@ -22,6 +25,14 @@ public class PlayerInventory implements Serializable {
         this.consumableInventory = new ConsumableInventory();
         this.money = 900;
         this.pastTamas = new ArrayList<>();
+    }
+
+    @JsonCreator
+    public PlayerInventory(@JsonProperty("consumableInventory") ConsumableInventory consumableInventory, @JsonProperty("money") int money, @JsonProperty("currentTama") Tama currentTama, @JsonProperty("pastTamas") List<Tama> pastTamas) {
+        this.consumableInventory = consumableInventory;
+        this.money = money;
+        this.currentTama = currentTama;
+        this.pastTamas = pastTamas;
     }
 
     public ConsumableInventory getConsumableInventory() {

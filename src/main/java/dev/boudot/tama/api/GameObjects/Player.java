@@ -5,6 +5,9 @@ import java.io.Serializable;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.redis.core.RedisHash;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 @RedisHash("Player")
 public class Player implements Serializable {
     @Id
@@ -17,6 +20,12 @@ public class Player implements Serializable {
     public Player(String userName) {
         this.userName = userName;
         this.playerInventory = new PlayerInventory();
+    }
+
+    @JsonCreator
+    public Player(@JsonProperty("userName") String userName, @JsonProperty("playerInventory") PlayerInventory playerInventory) {
+        this.userName = userName;
+        this.playerInventory = playerInventory;
     }
 
     public String getUserName() {

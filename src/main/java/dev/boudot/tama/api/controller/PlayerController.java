@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import dev.boudot.tama.api.GameObjects.Food;
 import dev.boudot.tama.api.GameObjects.Player;
 import dev.boudot.tama.api.controller.requestBody.PlayerNameBody;
 import dev.boudot.tama.api.service.PlayerService;
@@ -62,7 +63,10 @@ public class PlayerController {
             return "A player with the same name already exist";
         }
 
-        playerService.savePlayer(new Player(name));
+        player = new Player(name);
+        player.getPlayerInventory().getConsumableInventory().addFood(new Food("Pizza", 20, 2));
+
+        playerService.savePlayer(player);
 
         return "The player has been created";
     }
