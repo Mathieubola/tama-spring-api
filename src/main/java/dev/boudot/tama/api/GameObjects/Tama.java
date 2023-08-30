@@ -1,8 +1,8 @@
 package dev.boudot.tama.api.GameObjects;
 
-import java.io.Serializable;
+import java.util.HashMap;
 
-public class Tama implements Serializable {
+public class Tama {
     protected String name;
     protected int foodLevel;
     protected int happinessLevel;
@@ -21,6 +21,13 @@ public class Tama implements Serializable {
         this.foodLevel = maxFoodLevel;
         this.happinessLevel = maxHappinessLevel;
         this.stage = tamaStage.EGG;
+    }
+
+    public Tama(String name, int foodLevel, int happinessLevel, tamaStage stage) {
+        this.name = name;
+        this.foodLevel = foodLevel;
+        this.happinessLevel = happinessLevel;
+        this.stage = stage;
     }
 
 
@@ -70,6 +77,34 @@ public class Tama implements Serializable {
 
     public tamaStage getStage() {
         return this.stage;
+    }
+
+    @Override
+    public String toString() {
+        return "{" +
+            " name='" + getName() + "'" +
+            ", foodLevel='" + getFoodLevel() + "'" +
+            ", happinessLevel='" + getHappinessLevel() + "'" +
+            ", stage='" + getStage() + "'" +
+            "}";
+    }
+
+    public HashMap<String, Object> getHash() {
+        HashMap<String, Object> hash = new HashMap<>();
+        hash.put("name", this.name);
+        hash.put("foodLevel", this.foodLevel);
+        hash.put("happinessLevel", this.happinessLevel);
+        hash.put("stage", this.stage.toString());
+        return hash;
+    }
+
+    public static Tama fromHash(HashMap<String, Object> hash) {
+        return new Tama(
+            (String) hash.get("name"),
+            (int) hash.get("foodLevel"),
+            (int) hash.get("happinessLevel"),
+            tamaStage.valueOf((String) hash.get("stage"))
+        );
     }
 
 }

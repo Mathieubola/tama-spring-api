@@ -1,24 +1,16 @@
 package dev.boudot.tama.api.GameObjects;
 
-import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
-import org.springframework.data.redis.core.RedisHash;
-
-import com.fasterxml.jackson.annotation.JsonCreator;
-import com.fasterxml.jackson.annotation.JsonProperty;
-
-@RedisHash("PlayerInventory")
-public class PlayerInventory implements Serializable {
+public class PlayerInventory {
 
     private final ConsumableInventory consumableInventory;
     private int money;
 
     private Tama currentTama;
     private final List<Tama> pastTamas;
-
-    public static final long serialVersionUID = -1015085005291025041L;
 
 
     public PlayerInventory() {
@@ -27,8 +19,7 @@ public class PlayerInventory implements Serializable {
         this.pastTamas = new ArrayList<>();
     }
 
-    @JsonCreator
-    public PlayerInventory(@JsonProperty("consumableInventory") ConsumableInventory consumableInventory, @JsonProperty("money") int money, @JsonProperty("currentTama") Tama currentTama, @JsonProperty("pastTamas") List<Tama> pastTamas) {
+    public PlayerInventory(ConsumableInventory consumableInventory, int money, Tama currentTama, List<Tama> pastTamas) {
         this.consumableInventory = consumableInventory;
         this.money = money;
         this.currentTama = currentTama;
@@ -79,6 +70,40 @@ public class PlayerInventory implements Serializable {
             ", currentTama='" + currentTama + "'" +
             ", pastTamas='" + getPastTamas().toString() + "'" +
             "}";
+    }
+
+    public HashMap<String, Object> getHash() {
+        HashMap<String, Object> hash = new HashMap<>();
+        hash.put("consumableInventory", this.consumableInventory.getHash());
+        hash.put("money", this.money);
+        if ( this.currentTama != null ) {
+            hash.put("currentTama", this.currentTama.getHash());
+        }
+        for (int i = 0; i < this.pastTamas.size(); i++) {
+            hash.put("pastTamas." + i, this.pastTamas.get(i).getHash());
+        }
+        return hash;
+    }
+
+    public static PlayerInventory fromHash(HashMap<String, Object> hash) {
+        ConsumableInventory consumableInventory;
+        if ( hash.containsKey("consumableInventory")) {
+            consumableInventory = ConsumableInventory.fromHash((HashMap<String, Object>) hash.get("consumableInventory"));
+        } else {
+            consumableInventory = new ConsumableInventory();
+        }
+        int money = (int) hash.get("money");
+        Tama currentTama = null;
+        if ( hash.containsKey("currentTama") ) {
+            currentTama = Tama.fromHash((HashMap<String, Object>) hash.get("currentTama"));
+        }
+        List<Tama> pastTamas = new ArrayList<>();
+        for (int i = 0; i < 10; i++) {
+            if ( hash.containsKey("pastTamas." + i) ) {
+                pastTamas.add(Tama.fromHash((HashMap<String, Object>) hash.get("pastTamas." + i)));
+            }
+        }
+        return new PlayerInventory(consumableInventory, money, currentTama, pastTamas);
     }
 
 }

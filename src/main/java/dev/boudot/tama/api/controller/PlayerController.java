@@ -3,9 +3,6 @@ package dev.boudot.tama.api.controller;
 import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.redis.core.HashOperations;
-import org.springframework.data.redis.core.RedisTemplate;
-import org.springframework.data.redis.hash.Jackson2HashMapper;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -15,7 +12,6 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
-import dev.boudot.tama.api.GameObjects.Food;
 import dev.boudot.tama.api.GameObjects.Player;
 import dev.boudot.tama.api.controller.requestBody.PlayerNameBody;
 import dev.boudot.tama.api.service.PlayerService;
@@ -45,7 +41,14 @@ public class PlayerController {
             return "The player name is wrong";
         }
 
-        return playerService.getPlayer(playerName).toString();
+        // Player player = playerService.getPlayer(playerName);
+
+        // if ( player == null ) {
+        //     return "No player with this name exists";
+        // }
+
+        // return player.toString();
+        return playerService.getPlayer(playerName);
     }
 
     @PostMapping()
@@ -57,15 +60,14 @@ public class PlayerController {
 
         String name = requestBody.name;
 
-        Player player = playerService.getPlayer(name);
+        Player player; // = playerService.getPlayer(name);
 
-        if ( player != null ) {
-            return "A player with the same name already exist";
-        }
+        // if ( player != null ) {
+        //     return "A player with the same name already exist";
+        // }
 
         player = new Player(name);
-        player.getPlayerInventory().getConsumableInventory().addFood(new Food("Pizza", 20, 2));
-
+  
         playerService.savePlayer(player);
 
         return "The player has been created";
@@ -80,11 +82,11 @@ public class PlayerController {
 
         String name = requestBody.name;
 
-        Player player = playerService.getPlayer(name);
+        // Player player = playerService.getPlayer(name);
 
-        if ( player == null ) {
-            return "No player with this name exists";
-        }
+        // if ( player == null ) {
+        //     return "No player with this name exists";
+        // }
 
         playerService.deletePlayer(name);
 

@@ -1,20 +1,13 @@
 package dev.boudot.tama.api.GameObjects;
 
-import java.io.Serializable;
+import java.util.HashMap;
 
 import org.springframework.data.annotation.Id;
-import org.springframework.data.redis.core.RedisHash;
 
-import com.fasterxml.jackson.annotation.JsonCreator;
-import com.fasterxml.jackson.annotation.JsonProperty;
-
-@RedisHash("Player")
-public class Player implements Serializable {
+public class Player {
     @Id
     private final String userName;
     private final PlayerInventory playerInventory;
-
-    public static final long serialVersionUID = 3721950011792878116L;
 
 
     public Player(String userName) {
@@ -22,8 +15,7 @@ public class Player implements Serializable {
         this.playerInventory = new PlayerInventory();
     }
 
-    @JsonCreator
-    public Player(@JsonProperty("userName") String userName, @JsonProperty("playerInventory") PlayerInventory playerInventory) {
+    public Player(String userName, PlayerInventory playerInventory) {
         this.userName = userName;
         this.playerInventory = playerInventory;
     }
@@ -42,6 +34,20 @@ public class Player implements Serializable {
             " userName='" + getUserName() + "'" +
             ", playerInventory='" + getPlayerInventory().toString() + "'" +
             "}";
+    }
+
+    public HashMap<String, Object> getHash() {
+        HashMap<String, Object> hash = new HashMap<>();
+        hash.put("userName", this.userName);
+        hash.put("playerInventory", this.playerInventory.getHash());
+        return hash;
+    }
+
+    public static Player fromHash(HashMap<String, Object> hash) {
+        return new Player(
+            (String) hash.get("userName"),
+            PlayerInventory.fromHash((HashMap<String, Object>) hash.get("playerInventory"))
+        );
     }
 
 }
