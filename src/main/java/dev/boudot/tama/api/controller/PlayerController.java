@@ -41,14 +41,13 @@ public class PlayerController {
             return "The player name is wrong";
         }
 
-        // Player player = playerService.getPlayer(playerName);
+        Player player = playerService.getPlayer(playerName);
 
-        // if ( player == null ) {
-        //     return "No player with this name exists";
-        // }
+        if ( player == null ) {
+            return "No player with this name exists";
+        }
 
-        // return player.toString();
-        return playerService.getPlayer(playerName);
+        return player.toString();
     }
 
     @PostMapping()
@@ -60,11 +59,11 @@ public class PlayerController {
 
         String name = requestBody.name;
 
-        Player player; // = playerService.getPlayer(name);
+        Player player = playerService.getPlayer(name);
 
-        // if ( player != null ) {
-        //     return "A player with the same name already exist";
-        // }
+        if ( player != null ) {
+            return "A player with the same name already exist";
+        }
 
         player = new Player(name);
   
@@ -82,11 +81,11 @@ public class PlayerController {
 
         String name = requestBody.name;
 
-        // Player player = playerService.getPlayer(name);
+        Player player = playerService.getPlayer(name);
 
-        // if ( player == null ) {
-        //     return "No player with this name exists";
-        // }
+        if ( player == null ) {
+            return "No player with this name exists";
+        }
 
         playerService.deletePlayer(name);
 
