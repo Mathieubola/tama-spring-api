@@ -15,12 +15,20 @@ import org.springframework.stereotype.Service;
 import dev.boudot.tama.api.GameObjects.Food;
 import dev.boudot.tama.api.GameObjects.Player;
 
+/**
+ * Service class for managing player data in Redis.
+ */
 @Service
 public class PlayerService {
 
     private final RedisTemplate<String, Object> redisTemplate;
     private final HashOperations<String, String, Object> hashOperations;
     
+    /**
+     * Constructs a PlayerService with the provided RedisTemplate.
+     *
+     * @param redisTemplate The RedisTemplate used for database operations.
+     */
     public PlayerService(RedisTemplate<String,Object> redisTemplate) {
         this.redisTemplate = redisTemplate;
         this.hashOperations = redisTemplate.opsForHash();
@@ -28,6 +36,11 @@ public class PlayerService {
 
     private final String HASH_KEY = "players"; // Key for the Redis Hash
 
+    /**
+     * Saves player data to Redis.
+     *
+     * @param player The player object to be saved.
+     */
     public void savePlayer(Player player) {
         player.getPlayerInventory().getConsumableInventory()
             .addFood(new Food("Pizza", 50, 50));
@@ -38,6 +51,11 @@ public class PlayerService {
         hashOperations.putAll(key, flatHash);
     }
 
+    /**
+     * Retrieves a list of player objects from Redis.
+     *
+     * @return A list of player objects stored in Redis.
+     */
     public List<Player> getPlayer() {
         Cursor<Entry<Object, Object>> cur = redisTemplate.opsForHash().scan(HASH_KEY, ScanOptions.NONE);
         Set<Object> keys = cur.stream().map(Entry::getKey).collect(Collectors.toSet());
@@ -47,6 +65,12 @@ public class PlayerService {
         return players;
     }
 
+    /**
+     * Retrieves a player object from Redis by their username.
+     *
+     * @param name The username of the player to retrieve.
+     * @return The player object associated with the provided username, or null if not found.
+     */
     public Player getPlayer(String name) {
         HashMap<String, Object> hash = (HashMap<String, Object>) hashOperations.entries(HASH_KEY + ":" + name);
         if (hash == null || hash.isEmpty() ) {
@@ -57,6 +81,12 @@ public class PlayerService {
         return player;
     }
 
+    /**
+     * Deletes a player object from Redis by their username.
+     *
+     * @param name The username of the player to delete.
+     * @return true if the player is successfully deleted, false otherwise.
+     */
     public boolean deletePlayer(String name) {
         try {
             redisTemplate.delete(HASH_KEY + ":" + name);

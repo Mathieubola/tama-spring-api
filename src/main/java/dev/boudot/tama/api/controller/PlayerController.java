@@ -16,13 +16,26 @@ import dev.boudot.tama.api.GameObjects.Player;
 import dev.boudot.tama.api.controller.requestBody.PlayerNameBody;
 import dev.boudot.tama.api.service.PlayerService;
 
+/**
+ * This class represents the controller for the Player entity.
+ * It handles HTTP requests related to player creation, deletion and retrieval.
+ * The class uses the PlayerService to interact with the database.
+ */
 @Controller
 @RequestMapping("/player")
 public class PlayerController {
 
+    /**
+     * This field is used to inject an instance of the PlayerService class, which provides methods to interact with the player data.
+     */
     @Autowired
     private PlayerService playerService;
 
+    /**
+     * Retrieves a list of player usernames.
+     *
+     * @return A JSON array containing the usernames of all players.
+     */    
     @GetMapping()
     @ResponseBody
     public String getPlayerNames() {
@@ -34,6 +47,12 @@ public class PlayerController {
             .toString();
     }
 
+    /**
+     * Retrieves information about a player by their username.
+     *
+     * @param playerName The username of the player to retrieve.
+     * @return A JSON representation of the player's information.
+     */
     @GetMapping("{playerName}")
     @ResponseBody
     public String getPlayerInfo(@PathVariable String playerName) {
@@ -50,6 +69,12 @@ public class PlayerController {
         return player.toString();
     }
 
+    /**
+     * Creates a new player with the provided name.
+     *
+     * @param requestBody The request body containing the player's name.
+     * @return A message indicating the result of the player creation.
+     */
     @PostMapping()
     @ResponseBody
     public String createPlayer(@RequestBody PlayerNameBody requestBody) {
@@ -72,6 +97,12 @@ public class PlayerController {
         return "The player has been created";
     }
 
+    /**
+     * Deletes a player with the provided name.
+     *
+     * @param requestBody The request body containing the player's name.
+     * @return A message indicating the result of the player deletion.
+     */
     @DeleteMapping()
     @ResponseBody
     public String deletePlayer(@RequestBody PlayerNameBody requestBody) {
